@@ -1,0 +1,29 @@
+.product {
+    width: 29%;
+    height: fit-content;
+    margin: 2% 0;
+    background-color: #266a6c;
+    text-align: center;
+    padding: 5px;
+    border: 1px solid #000;
+}
+
+.product .title, .product .image, .product .price {
+    width: 100%;
+}
+
+.product .image {
+    margin: 4% 0;
+    border: 1px solid #000;
+}
+
+.product .image img {
+    width: 100%;
+}
+
+.product a {
+    text-decoration: none;
+    color: #000;
+    font-size: 20px;
+}
+

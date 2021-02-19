@@ -20,9 +20,16 @@ export default class App extends Component {
     }
 
     fetchProducts = async () => {
+        const headers = {
+            method: "GET",
+            headers: new Headers({"accept": "application/json"}),
+            mode: "cors",
+            cache: "default"
+        }
+
         let products = [];
 
-        let fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT')
+        let fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
             .then(res => res.json());
 
         for(let fetchProduct of fetchProducts.results) {
@@ -34,7 +41,7 @@ export default class App extends Component {
                 "image": ''
             }
 
-            let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id)
+            let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                 .then(res => res.json());
             product.image = fetchPicture.variations[0].url;
             
@@ -44,7 +51,7 @@ export default class App extends Component {
         let productsTotal = fetchProducts.paging.total;
         if(productsTotal > 50) {
             for(let i = 1; i < productsTotal/50 + 1; i++) {
-                fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT&offset=' + i * 50)
+                fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT&offset=' + i * 50, headers)
                     .then(res => res.json());
 
                 for(let fetchProduct of fetchProducts.results) {
@@ -56,7 +63,7 @@ export default class App extends Component {
                         "image": ''
                     }
 
-                    let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id)
+                    let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                         .then(res => res.json());
                     product.image = fetchPicture.variations[0].url;
                     

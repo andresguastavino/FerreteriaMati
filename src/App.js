@@ -19,7 +19,7 @@ export default class App extends Component {
         this.fetchProducts();
     }
 
-    fetchProducts = async () => {
+    fetchProducts() {
         const headers = {
             method: "GET",
             headers: {

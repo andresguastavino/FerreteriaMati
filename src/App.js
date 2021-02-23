@@ -9,81 +9,78 @@ export default class App extends Component {
 
         this.state = {
             products: [],
+            done: false,
         }
 
         this.fetchProducts = this.fetchProducts.bind(this);
-        this.fetchImages = this.fetchImages.bind(this);
     }
 
     componentDidMount() {
         this.fetchProducts();
     }
 
-    fetchProducts() {
+    fetchProducts = async () => {
         const headers = {
             method: "GET",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "Authorization": "Bearer APP_USR-2549013216826875-022316-29e292b690343e2d9dda605f35199cad-163399707",
-                "Access-Control-Allow-Origin": "https://ferreteria-tt-demo.herokuapp.com/"
+                "Access-Control-Allow-Origin": "http://localhost:3000"
             }
         }
 
         let products = [];
 
-        let dataProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
+        let data = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
             .then(response => response.json());
-
-        console.log(dataProducts);
-
-        for(let dataProduct of dataProducts.results) {
+        console.log('here 1');
+        for(let productData of data.results) {
             let product = {
-                "id": dataProduct.id,
-                "title": dataProduct.title,
-                "price": dataProduct.price,
-                "permalink": dataProduct.permalink,
+                "id": productData.id,
+                "title": productData.title,
+                "price": productData.price,
+                "permalink": productData.permalink,
                 "image": ''
             }
 
-            products.push(product);
-            this.setState({products: products});
-        }
+            let pictureData = await fetch('https://api.mercadolibre.com/pictures/' + productData.thumbnail_id, headers)
+                .then(response => response.json());
+            product.image = pictureData.variations[0].url;
 
-
-/*
-            let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
-                .then(res => res.json());
-            product.image = fetchPicture.variations[0].url;
-            *
             products.push(product);
         }
-
-        let productsTotal = fetchProducts.paging.total;
+        console.log('here 2');
+        let productsTotal = data.paging.total;
         if(productsTotal > 50) {
             for(let i = 1; i < productsTotal/50 + 1; i++) {
-                fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT&offset=' + i * 50, headers)
-                    .then(res => res.json());
+                data = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT&offset=' + i * 50, headers)
+                    .then(response => response.json());
 
-                for(let fetchProduct of fetchProducts.results) {
+                for(let dataProduct of data.results) {
                     let product = {
-                        "id": fetchProduct.id,
-                        "title": fetchProduct.title,
-                        "price": fetchProduct.price,
-                        "permalink": fetchProduct.permalink,
+                        "id": dataProduct.id,
+                        "title": dataProduct.title,
+                        "price": dataProduct.price,
+                        "permalink": dataProduct.permalink,
                         "image": ''
                     }
-/*
-                    let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
-                        .then(res => res.json());
-                    product.image = fetchPicture.variations[0].url;
-                    *
+
+                    let dataPicture = await fetch('https://api.mercadolibre.com/pictures/' + dataProduct.thumbnail_id, headers)
+                        .then(response => response.json());
+                    product.image = dataPicture.variations[0].url;
+
                     products.push(product);
                 }
-                console.log(products);
-                this.setState({products: products});
             }
         }
+        console.log('here 3');
+        this.setState((state) => {
+            return {
+                products: products,
+                done: true
+            }
+        });
 
             /*
             .then(
@@ -207,11 +204,11 @@ export default class App extends Component {
     }
 
     render() {
-        let { products } = this.state;
+        let { products, done } = this.state;
 
         return(
             <div className="app">
-                <Main products={products} />
+                {done ? <Main products={products} /> : <p>Fetching data</p>}
             </div>
         );
     }

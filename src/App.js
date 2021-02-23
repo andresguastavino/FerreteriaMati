@@ -23,18 +23,17 @@ export default class App extends Component {
         const headers = {
             method: "GET",
             headers: {
-                "accept": "application/json",
-                "content-type": "application/json",
-                "authorization": "Bearer APP_USR-2549013216826875-022303-746af60233a006a89dfb677e586a6cb9-163399707"
-            },
-            mode: "cors",
-            cache: "default"
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer APP_USR-2549013216826875-022303-746af60233a006a89dfb677e586a6cb9-163399707"
+            }
         }
 
         let products = [];
 
         let fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
             .then(res => res.json());
+            console.log(fetchProducts);
 
         for(let fetchProduct of fetchProducts.results) {
             let product = {

@@ -48,6 +48,7 @@ export default class App extends Component {
             let pictureData = await fetch('https://api.mercadolibre.com/pictures/' + productData.thumbnail_id, headers)
                 .then(response => response.json())
                 .catch(error => console.log(error));
+            console.log(pictureData);
             product.image = pictureData.variations[0].url;
 
             products.push(product);

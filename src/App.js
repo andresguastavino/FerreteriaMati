@@ -26,7 +26,7 @@ export default class App extends Component {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "Authorization": "Bearer APP_USR-2549013216826875-022316-29e292b690343e2d9dda605f35199cad-163399707",
-                "Access-Control-Allow-Origin": "http://localhost:3000"
+                "Access-Control-Allow-Origin": "https://ferreteria-tt-demo.herokuapp.com/"
             }
         }
 

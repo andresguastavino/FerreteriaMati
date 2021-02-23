@@ -43,11 +43,11 @@ export default class App extends Component {
                 "permalink": fetchProduct.permalink,
                 "image": ''
             }
-
+/*
             let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                 .then(res => res.json());
             product.image = fetchPicture.variations[0].url;
-            
+            */
             products.push(product);
         }
 
@@ -65,11 +65,11 @@ export default class App extends Component {
                         "permalink": fetchProduct.permalink,
                         "image": ''
                     }
-
+/*
                     let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                         .then(res => res.json());
                     product.image = fetchPicture.variations[0].url;
-                    
+                    */
                     products.push(product);
                 }
 

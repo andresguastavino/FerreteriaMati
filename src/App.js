@@ -47,9 +47,10 @@ export default class App extends Component {
             }
 
             products.push(product);
+            this.setState({products: products});
         }
 
-        this.setState({products: products});
+
 /*
             let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                 .then(res => res.json());

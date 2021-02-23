@@ -25,38 +25,31 @@ export default class App extends Component {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                "Authorization": "Bearer APP_USR-2549013216826875-022303-746af60233a006a89dfb677e586a6cb9-163399707"
+                "Authorization": "Bearer APP_USR-2549013216826875-022303-746af60233a006a89dfb677e586a6cb9-163399707",
+                "Access-Control-Allow-Origin": "https://ferreteria-tt-demo.herokuapp.com/"
             }
         }
 
         let products = [];
 
-        fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                for(let product of data.results) {
-                    products.push({
-                        "id": product.id,
-                        "title": product.title,
-                        "price": product.price,
-                        "permalink": product.permalink,
-                        "image": ''
-                    });
-                }
-            })  
-            .catch(error => console.log(error));
-            /*
-            console.log(fetchProducts);
+        let dataProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
+            .then(response => response.json());
 
-        for(let fetchProduct of fetchProducts.results) {
+        console.log(dataProducts);
+
+        for(let dataProduct of dataProducts.results) {
             let product = {
-                "id": fetchProduct.id,
-                "title": fetchProduct.title,
-                "price": fetchProduct.price,
-                "permalink": fetchProduct.permalink,
+                "id": dataProduct.id,
+                "title": dataProduct.title,
+                "price": dataProduct.price,
+                "permalink": dataProduct.permalink,
                 "image": ''
             }
+
+            products.push(product);
+        }
+
+        this.setState({products: products});
 /*
             let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                 .then(res => res.json());

@@ -22,7 +22,11 @@ export default class App extends Component {
     fetchProducts = async () => {
         const headers = {
             method: "GET",
-            headers: new Headers({"accept": "application/json"}),
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "authorization": "Bearer APP_USR-2549013216826875-022303-746af60233a006a89dfb677e586a6cb9-163399707"
+            },
             mode: "cors",
             cache: "default"
         }

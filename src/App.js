@@ -31,8 +31,22 @@ export default class App extends Component {
 
         let products = [];
 
-        let fetchProducts = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
-            .then(res => res.json());
+        fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                for(let product of data.results) {
+                    products.push({
+                        "id": product.id,
+                        "title": product.title,
+                        "price": product.price,
+                        "permalink": product.permalink,
+                        "image": ''
+                    });
+                }
+            })  
+            .catch(error => console.log(error));
+            /*
             console.log(fetchProducts);
 
         for(let fetchProduct of fetchProducts.results) {
@@ -47,7 +61,7 @@ export default class App extends Component {
             let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                 .then(res => res.json());
             product.image = fetchPicture.variations[0].url;
-            */
+            *
             products.push(product);
         }
 
@@ -69,10 +83,10 @@ export default class App extends Component {
                     let fetchPicture = await fetch('https://api.mercadolibre.com/pictures/' + fetchProduct.thumbnail_id, headers)
                         .then(res => res.json());
                     product.image = fetchPicture.variations[0].url;
-                    */
+                    *
                     products.push(product);
                 }
-
+                console.log(products);
                 this.setState({products: products});
             }
         }

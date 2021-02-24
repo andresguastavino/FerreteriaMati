@@ -13,75 +13,73 @@ export default class App extends Component {
         }
 
         this.fetchData = this.fetchData.bind(this);
-        this.fetchDataProducts = this.fetchDataProducts.bind(this);
-        this.getHeaders = this.getHeaders.bind(this);
     }
 
     componentDidMount() {
         this.fetchData();
     }
 
-    fetchData() {
-        this.fetchDataProducts();
-    }
-
-    fetchDataProducts = async() => {
-        const headers = this.getHeaders();
-
+    fetchData = async() => {
+        //const headers = this.getHeaders();
         let i = 0;
-        while(i < 1000 && !this.state.done) {
+        let done = false;
+        let products = [];
+        while(i < 1000 && !done) {
             let endpoint = 'https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT';
 
             if(i > 0) {
                 endpoint += '&offset=' + i;
             }
 
-            await fetch(endpoint/*, headers*/)
-            .then(response => response.json())
-            .then(data => {
-                let products = this.state.products;
-                let dataProducts = data.results;
+            await fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    let dataProducts = data.results;
 
-                if(dataProducts.length > 0) {
-                    for(let productData of dataProducts) {
-                        let product = {
-                            "id": productData.id,
-                            "title": productData.title,
-                            "price": productData.price,
-                            "permalink": productData.permalink,
-                            "thumbnail_id": productData.thumbnail_id,
-                            "image": ''
+                    if(dataProducts.length > 0) {
+                        for(let dataProduct of dataProducts) {
+                            products.push({
+                                "id": dataProduct.id,
+                                "title": dataProduct.title,
+                                "price": dataProduct.price,
+                                "permalink": dataProduct.permalink,
+                                "thumbnail_id": dataProduct.thumbnail_id,
+                                "image": ''
+                            });
                         }
-
-                        fetch('https://api.mercadolibre.com/pictures/' + product.thumbnail_id, 
-                        {
-                            method: "GET",
-                            headers: {
-                                "Accept": "application/json",
-                                "Access-Control-Allow-Origin": "https://ferreteria-tt-demo.herokuapp.com"
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            product.image = data.variations[0].secure_url;
-                        })
-                        .catch(error => console.log(error));
-
-                        products.push(product);
+                    } else {
+                        done = true;
                     }
-
-                    this.setState({products: products});
-                } else {
-                    this.setState({done: true});
-                }
-            })
-            .catch(error => console.log(error));
-
+                })
+                .catch(error => console.log(error));
             i += 50;
         }
-        
-    }
 
+        for(let product of products) {
+            await fetch('https://api.mercadolibre.com/pictures/' + product.thumbnail_id, 
+                /*{
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json",
+                        "Access-Control-Allow-Origin": 'https://ferreteria-tt-demo.herokuapp.com'
+                    }
+                }*/)
+                .then(response => response.json())
+                .then(data => {
+                    product.image = data.variations[0].secure_url;
+                })
+                .catch(error => console.log(error));
+        }
+
+
+        this.setState((state) => {
+            return {
+                products: products,
+                done: true
+            }
+        });
+    }
+/*
     getHeaders() {
         let origin1 = "https://ferreteria-tt-demo.herokuapp.com";
         let origin2 = "http://localhost:3000";
@@ -97,7 +95,7 @@ export default class App extends Component {
 
         return headers;
     }
-
+*/
     render() {
         let { products, done } = this.state;
 

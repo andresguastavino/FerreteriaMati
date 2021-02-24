@@ -12,28 +12,34 @@ export default class App extends Component {
             done: false,
         }
 
-        this.fetchProducts = this.fetchProducts.bind(this);
+        this.fetchData = this.fetchData.bind(this);
+        this.fetchDataProducts = this.fetchDataProducts.bind(this);
+        this.fetchDataPicture = this.fetchDataPicture.bind(this);
+        this.getHeaders = this.getHeaders.bind(this);
     }
 
     componentDidMount() {
-        this.fetchProducts();
+        this.fetchData();
     }
 
-    fetchProducts = async () => {
-        const headers = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json",
-                "Authorization": "Bearer APP_USR-2549013216826875-022316-29e292b690343e2d9dda605f35199cad-163399707",
-                "Access-Control-Allow-Origin": "https://ferreteria-tt-demo.herokuapp.com"
-            }
-        }
-
-        let products = [];
-        console.log('here');
-        let data = await fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
+    fetchData() {
+        this.fetchDataProducts();
+/*
+        fetch('https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT', headers)
             .then(response => response.json())
+            .then(data => {
+                let products = [];
+                
+                for(let productData of data.results) {
+                    let product = {
+                        "id": productData.id,
+                        "title": productData.title,
+                        "price": productData.price,
+                        "permalink": productData.permalink,
+                        "image": ''
+                    }
+                }
+            })
             .catch(error => console.log(error));
         console.log('here 1');
         for(let productData of data.results) {
@@ -85,7 +91,83 @@ export default class App extends Component {
                 products: products,
                 done: true
             }
-        });
+        });*/
+    }
+
+    fetchDataProducts = async() => {
+        const headers = this.getHeaders();
+
+        let i = 0;
+        while(i < 1000 && !this.state.done) {
+            let endpoint = 'https://api.mercadolibre.com/sites/MLA/search?nickname=FERRETERIA-TT';
+
+            if(i > 0) {
+                endpoint += '&offset=' + i;
+            }
+
+            await fetch(endpoint/*, headers*/)
+            .then(response => response.json())
+            .then(data => {
+                let products = this.state.products;
+                let dataProducts = data.results;
+
+                if(dataProducts.length > 0) {
+                    for(let productData of dataProducts) {
+                        let product = {
+                            "id": productData.id,
+                            "title": productData.title,
+                            "price": productData.price,
+                            "permalink": productData.permalink,
+                            "thumbnail_id": productData.thumbnail_id,
+                            "image": ''
+                        }
+
+                        fetch('https://api.mercadolibre.com/pictures/' + product.thumbnail_id/*, headers*/)
+                        .then(response => response.json())
+                        .then(data => {
+                            product.image = data.variations[0].secure_url;
+                        })
+                        .catch(error => console.log(error));
+
+                        products.push(product);
+                    }
+
+                    this.setState({products: products});
+                } else {
+                    this.setState({done: true});
+                }
+            })
+            .catch(error => console.log(error));
+
+            i += 50;
+        }
+        
+    }
+
+    fetchDataPicture(product) {
+        const headers = this.getHeaders();
+
+        let image;
+
+
+            
+        return image;
+    }
+
+    getHeaders() {
+        let origin1 = "https://ferreteria-tt-demo.herokuapp.com";
+        let origin2 = "http://localhost:3000";
+        const headers = {
+            method: "GET",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Authorization": "Bearer APP_USR-2549013216826875-022316-29e292b690343e2d9dda605f35199cad-163399707",
+                "Access-Control-Allow-Origin": origin2
+            }
+        }
+
+        return headers;
     }
 
     render() {

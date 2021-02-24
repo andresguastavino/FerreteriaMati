@@ -53,7 +53,14 @@ export default class App extends Component {
                             "image": ''
                         }
 
-                        fetch('https://api.mercadolibre.com/pictures/' + product.thumbnail_id/*, headers*/)
+                        fetch('https://api.mercadolibre.com/pictures/' + product.thumbnail_id, 
+                        {
+                            method: "GET",
+                            headers: {
+                                "Accept": "application/json",
+                                "Access-Control-Allow-Origin": "https://ferreteria-tt-demo.herokuapp.com"
+                            }
+                        })
                         .then(response => response.json())
                         .then(data => {
                             product.image = data.variations[0].secure_url;
